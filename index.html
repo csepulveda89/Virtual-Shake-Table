@@ -22,7 +22,7 @@ main{max-width:620px;margin:0 auto;padding:12px 12px 28px}
 header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 header img{height:46px;width:auto;border-radius:8px}
 h1{font-size:1.15rem;margin:0}h2{font-size:1rem;margin:0 0 8px}
-.sub{color:var(--mute);font-size:.8rem;margin:0}
+sub{font-size:.7em;line-height:0}.sub{color:var(--mute);font-size:.8rem;margin:0}
 .card{background:var(--pan);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
 .card.iso{border:2px solid var(--or)}
 [hidden]{display:none!important}
@@ -65,11 +65,11 @@ tr.m1{color:var(--or);font-weight:600}
 <div class="row"><button data-z="2">Steel (2%)</button><button data-z="5">Concrete (5%)</button><button data-z="15">Added damper (15%)</button></div>
 </div>
 <div class="card" id="isoCard">
-<div class="sw"><div><h2 style="margin:0">Add seismic isolation</h2><p class="sub">Bearings at the base slab. T iso assumes a rigid superstructure.</p></div><input id="iso" type="checkbox" aria-label="Enable isolation"></div>
+<div class="sw"><div><h2 style="margin:0">Add seismic isolation</h2><p class="sub">Bearings at the base slab. T<sub>iso</sub> assumes a rigid superstructure.</p></div><input id="iso" type="checkbox" aria-label="Enable isolation"></div>
 <div id="isoBox" hidden>
 <div class="ratio"><span id="rTxt"></span><b id="rVal"></b></div>
-<label>Isolated period (T iso) <b id="vTi"></b></label><input id="Ti" type="range" min="0.5" max="6" step="0.1" value="2.5">
-<label>Isolation system damping (ξ iso) <b id="vZi"></b></label><input id="Zi" type="range" min="2" max="40" step="1" value="20">
+<label>Isolated period (T<sub>iso</sub>) <b id="vTi"></b></label><input id="Ti" type="range" min="0.5" max="6" step="0.1" value="2.5">
+<label>Isolation system damping (ξ<sub>iso</sub>) <b id="vZi"></b></label><input id="Zi" type="range" min="2" max="40" step="1" value="20">
 <div class="row"><button data-zi="5">Low (5%)</button><button data-zi="15">HDRB (15%)</button><button data-zi="20">LRB (20%)</button></div>
 </div></div>
 <div class="card"><h2>Modal Frequencies</h2><p class="sub" id="mSub"></p>
@@ -80,7 +80,7 @@ tr.m1{color:var(--or);font-weight:600}
 
 <section id="lab" hidden>
 <div class="top"><button id="back" aria-label="Back">←</button><div><b id="lTit">Shake Table Lab</b><p class="sub" id="lSub"></p></div><button id="rst">Reset</button><button id="pl" class="or">Pause</button></div>
-<div class="card"><div class="stats" id="stats"><div><span>Peak acc</span><b id="sA">0</b></div><div><span>Peak roof</span><b id="sR">0</b></div><div><span>Max drift</span><b id="sD">0</b></div><div id="sUb"><span>Isolator ub</span><b id="sU">0</b></div><div><span>Vb/W</span><b id="sV">0</b></div></div></div>
+<div class="card"><div class="stats" id="stats"><div><span>Peak acc</span><b id="sA">0</b></div><div><span>Peak roof</span><b id="sR">0</b></div><div><span>Max drift</span><b id="sD">0</b></div><div id="sUb"><span>Isolator u<sub>b</sub></span><b id="sU">0</b></div><div><span>V<sub>b</sub>/W</span><b id="sV">0</b></div></div></div>
 <div class="card"><canvas id="cb"></canvas><label>Visual scale <b id="vE"></b></label><input id="E" type="range" min="1" max="25" value="1"><p class="sub" id="tip"></p></div>
 <div class="tabs"><button data-t="ex">Excitation</button><button data-t="in">Instruments</button><button data-t="mo">Modal Dynamics</button></div>
 <div class="card" id="tex"><h2>Ground Motion Excitation Source</h2>
@@ -132,11 +132,11 @@ var vb=Math.abs(sum)/(d*G0),P=this.pk;P.a=Math.max(P.a,Math.abs(ag));P.r=Math.ma
 this.cur={u:fl,ub:ub,roof:fl[S.N-1],dr:D}};
 // ---- estado del laboratorio
 var sv=null,run=true,src="sen",rs="maule",tp=0,hist=[],gv=0,gd=0,xt=0,xg=0,vg=0,dragX=null,axis=0,gain=1,bias=0,raw=0,rawLP=0,lastRaw=0,sensorOn=false,lastEv=0,agS=0,cnt=0;
-function labels(){$("hP").textContent=S.iso?"Superstructure Parameters":"Structure Parameters";$("lT").textContent=S.iso?"Superstructure period (T fixed)":"Structure period (T)";$("lZ").textContent=S.iso?"Superstructure damping (ξ fixed, same in all modes)":"Structure damping (ξ, same in all modes)";$("hD").textContent=S.iso?"Superstructure Drift Ratio (Δi/h)":"Drift Ratio (Δi/h)";$("vN").textContent=S.N;$("vT").textContent=S.T.toFixed(2)+" s (f = "+(1/S.T).toFixed(2)+" Hz)";$("vZ").textContent=(S.z*100).toFixed(1)+" %";$("vTi").textContent=S.Ti.toFixed(1)+" s";$("vZi").textContent=(S.zi*100).toFixed(0)+" %";
-$("rTxt").textContent="Period ratio (T iso / T fixed)";$("rVal").textContent=(S.Ti/S.T).toFixed(1)+"×";$("isoCard").classList.toggle("iso",S.iso);$("isoBox").hidden=!S.iso;
+function labels(){$("hP").textContent=S.iso?"Superstructure Parameters":"Structure Parameters";$("lT").innerHTML=S.iso?"Superstructure period (T<sub>fixed</sub>)":"Structure period (T)";$("lZ").innerHTML=S.iso?"Superstructure damping (ξ<sub>fixed</sub>, same in all modes)":"Structure damping (ξ, same in all modes)";$("hD").textContent=S.iso?"Superstructure Drift Ratio (Δi/h)":"Drift Ratio (Δi/h)";$("vN").textContent=S.N;$("vT").textContent=S.T.toFixed(2)+" s (f = "+(1/S.T).toFixed(2)+" Hz)";$("vZ").textContent=(S.z*100).toFixed(1)+" %";$("vTi").textContent=S.Ti.toFixed(1)+" s";$("vZi").textContent=(S.zi*100).toFixed(0)+" %";
+$("rTxt").innerHTML="Period ratio (T<sub>iso</sub> / T<sub>fixed</sub>)";$("rVal").textContent=(S.Ti/S.T).toFixed(1)+"×";$("isoCard").classList.toggle("iso",S.iso);$("isoBox").hidden=!S.iso;
 var Tm=$("Ti");Tm.min=Math.max(.5,S.T+.05).toFixed(2);
 var M=model(),h="";M.slice(0,5).forEach(function(m,i){h+="<tr"+(i?"":" class='m1'")+"><td>"+(i+1)+(i||!S.iso?"":" (iso) ★")+"</td><td>"+(PI2/m.w).toFixed(3)+"</td><td>"+(m.w/PI2).toFixed(2)+"</td><td>"+(m.xi*100).toFixed(1)+"%</td><td>"+(m.mf*100).toFixed(1)+"%</td></tr>"});
-$("mTb").innerHTML=h;$("mSub").textContent=S.iso?"Isolated: computed T₁ = "+(PI2/M[0].w).toFixed(2)+" s (T iso input: "+S.Ti.toFixed(2)+" s)":"Fixed base · uniform shear building"}
+$("mTb").innerHTML=h;$("mSub").innerHTML=S.iso?"Isolated: computed T<sub>1</sub> = "+(PI2/M[0].w).toFixed(2)+" s (T<sub>iso</sub> input: "+S.Ti.toFixed(2)+" s)":"Fixed base · uniform shear building"}
 $("N").oninput=function(){S.N=+this.value;labels()};
 $("T").oninput=function(){S.T=+this.value;if(S.iso&&S.Ti<=S.T)S.Ti=Math.min(6,Math.max(1,S.T+.5)),$("Ti").value=S.Ti;labels()};
 
@@ -149,7 +149,7 @@ document.querySelectorAll("[data-zi]").forEach(function(b){b.onclick=function(){
 function reset(){sv.reset();hist=[];tp=0;gv=gd=xt=xg=vg=0;cnt=0;upS()}
 function upS(){var P=sv.pk;$("sA").textContent=(P.a/G0).toFixed(2)+" g";$("sR").textContent=(P.r*100).toFixed(1)+" cm";$("sD").textContent=(P.d*100).toFixed(2)+" %";$("sU").textContent=(P.ub*100).toFixed(1)+" cm";$("sV").textContent=P.v.toFixed(2);
 if(tabN==="in")for(var i=0;i<S.N;i++){var c=(sv.cur.dr[i]||0)*100,p=P.dr[i]*100,f=$("df"+i);f.style.width=Math.min(100,c/3*100)+"%";f.style.background=c<1?"#2aa66a":c<2?"#e0a010":"#d83a3a";$("dp"+i).style.left=Math.min(99,p/3*100)+"%";$("dt"+i).textContent=c.toFixed(2)+"% (Pk: "+p.toFixed(2)+"%)"}}
-$("go").onclick=function(){sv=new Solver(model());$("setup").hidden=true;$("lab").hidden=false;$("lSub").textContent=S.N+" stories · T₁="+(PI2/sv.M[0].w).toFixed(2)+" s · ξ="+(S.z*100).toFixed(1)+"%"+(S.iso?" · isolated":"");
+$("go").onclick=function(){sv=new Solver(model());$("setup").hidden=true;$("lab").hidden=false;$("lSub").innerHTML=S.N+" stories · T<sub>1</sub>="+(PI2/sv.M[0].w).toFixed(2)+" s · ξ="+(S.z*100).toFixed(1)+"%"+(S.iso?" · isolated":"");
 var snap="";for(var j=0;j<Math.min(3,sv.M.length);j++)snap+="<button data-m='"+j+"'>Mode "+(j+1)+" ("+(sv.M[j].w/PI2).toFixed(2)+" Hz, T = "+(PI2/sv.M[j].w).toFixed(2)+" s)</button>";$("snap").innerHTML=snap;fsin=sv.M[0].w/PI2;$("F").value=fsin;
 document.querySelectorAll("[data-m]").forEach(function(b){b.onclick=function(){fsin=sv.M[+b.dataset.m].w/PI2;$("F").value=fsin;sel("sin");labels2()}});
 buildLab();tab("ex");sel(src);reset();if(src==="sen")startSensor()};
@@ -200,7 +200,7 @@ var ub=S.iso?cl(o.ub):0;
 if(S.iso){[-tw*.2,tw*.2].forEach(function(d){var X=ox+d,t=tb-26;x.fillStyle="#26323d";x.beginPath();x.moveTo(X-15,tb);x.lineTo(X+15,tb);x.lineTo(X+15+ub,t);x.lineTo(X-15+ub,t);x.closePath();x.fill();
 x.strokeStyle="#9fb1c1";x.lineWidth=1.5;for(var k=1;k<5;k++){var f=k/5;x.beginPath();x.moveTo(X-15+ub*f,tb-26*f);x.lineTo(X+15+ub*f,tb-26*f);x.stroke()}});
 x.fillStyle="#0b0f13";x.fillRect(ox+ub-tw*.32,tb-40,tw*.64,14);x.fillStyle="#fff";x.font="bold 8px system-ui,sans-serif";x.textAlign="center";x.fillText("ISOLATION SLAB",ox+ub,tb-30);x.textAlign="left";
-if(o.ubl){x.fillStyle=ink;x.font="10px system-ui,sans-serif";x.fillText("u_b: "+o.ubl,ox+ub+tw*.32+4,tb-30)}}
+if(o.ubl){x.fillStyle=ink;x.font="10px system-ui,sans-serif";var ux=ox+ub+tw*.32+4;x.fillText("u",ux,tb-30);var uw=x.measureText("u").width;x.font="7px system-ui,sans-serif";x.fillText("b",ux+uw,tb-27);var bw2=x.measureText("b").width;x.font="10px system-ui,sans-serif";x.fillText(": "+o.ubl,ux+uw+bw2,tb-30)}}
 var P=[ub];for(i=0;i<N;i++)P.push(o.u[i]);
 x.lineJoin="round";x.lineWidth=4;x.strokeStyle=bl;
 for(i=1;i<=N;i++){var y0=by-(i-1)*sh,y1=by-i*sh,a=ox+P[i-1],b=ox+P[i];x.beginPath();x.moveTo(a+L,y0);x.lineTo(b+L,y1);x.moveTo(a+R,y0);x.lineTo(b+R,y1);x.stroke();
@@ -216,14 +216,14 @@ x.fillStyle=mu;x.font="10px system-ui,sans-serif";x.textAlign="right";x.fillText
 for(var s=0;s<=Rc.dur+.01;s+=Rc.dur>20?10:5)x.fillText(s+"s",l+s/Rc.dur*pw,h-5);
 x.strokeStyle=css("--blue");x.lineWidth=1.2;x.beginPath();if(n<=pw*2){for(var i=0;i<n;i++){var X0=l+i/(n-1)*pw,Y0=mid-Rc.a[i]/pk*ph/2;if(i)x.lineTo(X0,Y0);else x.moveTo(X0,Y0)}}else{for(var c=0;c<pw;c++){var i0=Math.floor(c/pw*n),i1=Math.min(n,Math.floor((c+1)/pw*n)+1),mn=1e9,mx=-1e9;for(var i=i0;i<i1;i++){var v=Rc.a[i];if(v<mn)mn=v;if(v>mx)mx=v}x.moveTo(l+c+.5,mid-mx/pk*ph/2);x.lineTo(l+c+.5,mid-mn/pk*ph/2)}}x.stroke();
 var tt=Math.min(tp,Rc.dur),X=l+tt/Rc.dur*pw,ag=ground()/G0,Y=mid-ag/pk*ph/2,or=css("--or");x.strokeStyle=or;x.globalAlpha=.6;x.beginPath();x.moveTo(X,t);x.lineTo(X,t+ph);x.stroke();x.globalAlpha=1;x.fillStyle=or;x.beginPath();x.arc(X,Y,5,0,7);x.fill();x.textAlign="left";
-$("rInfo").textContent="t = "+tt.toFixed(2)+" s · ag = "+ag.toFixed(3)+" g · PGA "+pk.toFixed(3)+" g · "+n+" points, dt = "+Rc.dt+" s"}
+$("rInfo").innerHTML="t = "+tt.toFixed(2)+" s · a<sub>g</sub> = "+ag.toFixed(3)+" g · PGA "+pk.toFixed(3)+" g · "+n+" points, dt = "+Rc.dt+" s"}
 function drawTab(){if(tabN==="in")drawP();else if(tabN==="mo")drawM();else if(src==="rec")drawR()}
 function drawP(){var x=cp.getContext("2d"),w=cp.width/dpr,h=cp.height/dpr;x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,w,h);
 var win=20,tn=hist.length?hist[hist.length-1].t:0,t1=Math.max(win,tn),t0=t1-win,ph=(h-6)/2,ln=css("--line"),mu=css("--mute");
 function pn(k,key,col,lab,u){var y0=3+k*ph,mid=y0+ph/2+4,mx=1e-9,i;for(i=0;i<hist.length;i++)if(hist[i].t>=t0)mx=Math.max(mx,Math.abs(hist[i][key]));
 x.strokeStyle=ln;x.lineWidth=1;x.beginPath();x.moveTo(4,mid);x.lineTo(w-4,mid);x.stroke();x.fillStyle=mu;x.font="11px system-ui,sans-serif";x.fillText(lab+" (±"+mx.toFixed(2)+" "+u+")",6,y0+11);
 x.strokeStyle=col;x.lineWidth=1.5;x.beginPath();var f=1;for(i=0;i<hist.length;i++){var s=hist[i];if(s.t<t0)continue;var X=4+(s.t-t0)/win*(w-8),Y=mid-s[key]/mx*(ph/2-16);if(f){x.moveTo(X,Y);f=0}else x.lineTo(X,Y)}x.stroke()}
-pn(0,"g",css("--grd"),"Aceleración del suelo","g");pn(1,"d",css("--or"),"Desplazamiento del techo","cm")}
+pn(0,"g",css("--grd"),"Ground acceleration","g");pn(1,"d",css("--or"),"Roof displacement","cm")}
 function ground(){if(src==="sen")return sensorOn?agS:0;
 if(src==="sin")return +$("A").value*G0*Math.sin(PI2*fsin*tp);
 if(src==="rec"){var R=REC[rs],xx=tp/R.dt,i=Math.floor(xx);if(i>=R.a.length-1)return 0;return(R.a[i]+(R.a[i+1]-R.a[i])*(xx-i))*G0}
