@@ -160,8 +160,15 @@ document.querySelectorAll("[data-r]").forEach(function(b){b.onclick=function(){r
 document.querySelectorAll("[data-x]").forEach(function(b){b.onclick=function(){axis=+b.dataset.x;sel("sen")}});
 ["F","A","G","E"].forEach(function(i){$(i).oninput=function(){gain=+$("G").value;if(i==="F")fsin=+$("F").value;labels2()}});
 $("tare").onclick=function(){bias=lastRaw};
-function onMotion(e){var l=e.acceleration,g=e.accelerationIncludingGravity,v=null,lin=l&&l.x!=null;var o=lin?l:g;if(!o)return;v=[o.x,o.y,o.z][axis];if(v==null)return;
-if(!lin){rawLP=.85*(rawLP+v-raw);raw=v;v=rawLP}lastRaw=v;var x=v-bias;agS=Math.abs(x)<.05?0:x*gain;lastEv=performance.now();$("msg").textContent="Sensor active ("+(lin?"linear acceleration":"filtered accelerometer")+")."}
+var gE=[0,0,0],gInit=false,lastT=0,rotUntil=0;
+function onMotion(e){var g=e.accelerationIncludingGravity,l=e.acceleration,now=performance.now(),v,mode;
+if(g&&g.x!=null){var a=[g.x,g.y,g.z],r=e.rotationRate,w=r?Math.sqrt((r.alpha||0)*(r.alpha||0)+(r.beta||0)*(r.beta||0)+(r.gamma||0)*(r.gamma||0)):0,dt=lastT?Math.min(.1,(now-lastT)/1000):.02;lastT=now;
+if(!gInit){gE=a.slice();gInit=true}
+if(w>40)rotUntil=now+400;
+var tau=now<rotUntil?.08:.8,k=dt/(tau+dt);for(var i=0;i<3;i++)gE[i]+=k*(a[i]-gE[i]);
+v=a[axis]-gE[axis];mode="gravity removed, tilt-compensated"}
+else if(l&&l.x!=null){v=[l.x,l.y,l.z][axis];mode="linear acceleration"}else return;
+if(v==null)return;lastRaw=v;var x=v-bias;agS=Math.abs(x)<.08?0:x*gain;lastEv=now;$("msg").textContent="Sensor active ("+mode+")."}
 function startSensor(){if(sensorOn)return;try{var go=function(){addEventListener("devicemotion",onMotion);sensorOn=true;setTimeout(function(){if(!lastEv&&src==="sen")$("msg").textContent="No sensor data. This viewer may block it; try the published page on your phone."},2000)};
 if(window.DeviceMotionEvent&&typeof DeviceMotionEvent.requestPermission==="function")DeviceMotionEvent.requestPermission().then(function(r){if(r==="granted")go();else $("msg").textContent="Permission denied."}).catch(function(){$("msg").textContent="Could not request permission."});
 else if(window.DeviceMotionEvent)go();else $("msg").textContent="This browser has no accelerometer."}catch(e){$("msg").textContent="Could not access the sensor."}}
