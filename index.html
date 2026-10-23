@@ -81,7 +81,7 @@ tr.m1{color:var(--or);font-weight:600}
 <div class="row" id="src"><button data-s="sen">Phone shake</button><button data-s="fin">Drag the base</button><button data-s="rec">Record</button><button data-s="sin">Resonance sine</button></div>
 <div id="pRec" hidden><div class="row"><button data-r="maule">Maule 2010 (Constitución)</button><button data-r="north">Northridge 1994 (Sylmar)</button></div><canvas id="cr"></canvas><p class="sub" id="rInfo"></p></div>
 <div id="pSen" hidden><div class="row"><button data-x="0">X axis (left-right)</button><button data-x="1">Y axis (forward-back)</button><button data-x="2">Z axis</button><button id="tare">Zero / Tare</button></div>
-<p class="sub">Readings include gravity: tilt or flip the phone to apply a constant acceleration. Use Zero / Tare to zero the current reading.</p><label>Accelerometer gain <b id="vG"></b></label><input id="G" type="range" min="0.2" max="5" step="0.1" value="1"></div>
+<label>Accelerometer gain <b id="vG"></b></label><input id="G" type="range" min="0.2" max="5" step="0.1" value="1"></div>
 <div id="pSin" hidden><label>Frequency <b id="vF"></b></label><input id="F" type="range" min="0.1" max="15" step="0.01" value="2"><div class="row" id="snap"></div>
 <label>Amplitude <b id="vA"></b></label><input id="A" type="range" min="0.02" max="1" step="0.01" value="0.15"></div>
 <p class="note" id="msg"></p></div>
@@ -160,7 +160,8 @@ document.querySelectorAll("[data-r]").forEach(function(b){b.onclick=function(){r
 document.querySelectorAll("[data-x]").forEach(function(b){b.onclick=function(){axis=+b.dataset.x;sel("sen")}});
 ["F","A","G","E"].forEach(function(i){$(i).oninput=function(){gain=+$("G").value;if(i==="F")fsin=+$("F").value;labels2()}});
 $("tare").onclick=function(){bias=lastRaw};
-function onMotion(e){var g=e.accelerationIncludingGravity,o=g||e.acceleration;if(!o)return;var v=[o.x,o.y,o.z][axis];if(v==null)return;lastRaw=v;agS=(v-bias)*gain;lastEv=performance.now();$("msg").textContent="Sensor active ("+(g?"including gravity":"linear acceleration")+")."}
+function onMotion(e){var l=e.acceleration,g=e.accelerationIncludingGravity,v=null,lin=l&&l.x!=null;var o=lin?l:g;if(!o)return;v=[o.x,o.y,o.z][axis];if(v==null)return;
+if(!lin){rawLP=.85*(rawLP+v-raw);raw=v;v=rawLP}lastRaw=v;var x=v-bias;agS=Math.abs(x)<.05?0:x*gain;lastEv=performance.now();$("msg").textContent="Sensor active ("+(lin?"linear acceleration":"filtered accelerometer")+")."}
 function startSensor(){if(sensorOn)return;try{var go=function(){addEventListener("devicemotion",onMotion);sensorOn=true;setTimeout(function(){if(!lastEv&&src==="sen")$("msg").textContent="No sensor data. This viewer may block it; try the published page on your phone."},2000)};
 if(window.DeviceMotionEvent&&typeof DeviceMotionEvent.requestPermission==="function")DeviceMotionEvent.requestPermission().then(function(r){if(r==="granted")go();else $("msg").textContent="Permission denied."}).catch(function(){$("msg").textContent="Could not request permission."});
 else if(window.DeviceMotionEvent)go();else $("msg").textContent="This browser has no accelerometer."}catch(e){$("msg").textContent="Could not access the sensor."}}
